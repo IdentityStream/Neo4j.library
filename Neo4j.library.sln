@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "neo4jTests", "neo4jTests\neo4jTests.csproj", "{9B001133-2DCC-4FDD-9817-F103AFBB8A3C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo4j.tests", "Neo4j.tests\Neo4j.tests.csproj", "{9B001133-2DCC-4FDD-9817-F103AFBB8A3C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "neo4j.lib", "neo4j.lib_Driver\neo4j.lib.csproj", "{30A1377F-4448-4AFC-9282-AD0FB13DFB65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo4j.library", "Neo4j.library\Neo4j.library.csproj", "{30A1377F-4448-4AFC-9282-AD0FB13DFB65}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "neo4j.console", "neo4j.console\neo4j.console.csproj", "{AA0E2BCD-EF52-406A-B066-49DE512EE332}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Neo4j.console", "Neo4j.console\Neo4j.console.csproj", "{AA0E2BCD-EF52-406A-B066-49DE512EE332}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
