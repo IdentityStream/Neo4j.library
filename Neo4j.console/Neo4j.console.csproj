@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\neo4j.lib_Driver\neo4j.lib.csproj" />
+    <ProjectReference Include="..\Neo4j.library\Neo4j.library.csproj" />
   </ItemGroup>
 
 </Project>
