@@ -11,12 +11,14 @@ var accessLevels = testData.Item3;
 var roleAccessLevels = testData.Item4;
 var userAccessLevels = testData.Item5;
 var userRoles = testData.Item6;
+var tenants = testData.Item7;
 
 var nodeData = new List<IImportable>();
 var relationshipData = new List<IImportable>();
 nodeData.AddRange(users);
 nodeData.AddRange(roles);
 nodeData.AddRange(accessLevels);
+nodeData.AddRange(tenants);
 relationshipData.AddRange(roleAccessLevels);
 relationshipData.AddRange(userAccessLevels);
 relationshipData.AddRange(userRoles);
