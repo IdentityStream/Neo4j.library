@@ -18,7 +18,7 @@ namespace neo4j.console
             }
         }
 
-        public static Tuple<List<User>, List<Role>, List<AccessLevel>, List<RoleAccessLevel>, List<UserAccessLevel>, List<UserRole>> GetTestData()
+        public static Tuple<List<User>, List<Role>, List<AccessLevel>, List<RoleAccessLevel>, List<UserAccessLevel>, List<UserRole>, List<Tenant>> GetTestData()
         {
             // File paths
             string usersFile = "Users.csv"; // Replace with the actual file path
@@ -27,6 +27,7 @@ namespace neo4j.console
             string roleAccessLevelsFile = "RoleAccessLevels.csv";
             string userAccessLevelsFile = "UserAccessLevels.csv";
             string userRolesFile = "UserRoles.csv";
+            string tenantsFile = "Tenants.csv";
 
             // Read CSV files
             List<User> users = ReadCsv<User>(usersFile);
@@ -35,8 +36,9 @@ namespace neo4j.console
             List<RoleAccessLevel> roleAccessLevels = ReadCsv<RoleAccessLevel>(roleAccessLevelsFile);
             List<UserAccessLevel> userAccessLevels = ReadCsv<UserAccessLevel>(userAccessLevelsFile);
             List<UserRole> userRoles = ReadCsv<UserRole>(userRolesFile);
+            List<Tenant> tenants = ReadCsv<Tenant>(tenantsFile);
 
-            return new (users, roles, accessLevels, roleAccessLevels, userAccessLevels, userRoles);
+            return new (users, roles, accessLevels, roleAccessLevels, userAccessLevels, userRoles, tenants);
         }
     }
 }

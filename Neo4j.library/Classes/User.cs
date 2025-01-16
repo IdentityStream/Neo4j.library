@@ -9,6 +9,7 @@ namespace neo4j.lib.Classes
     {
         public Guid UserId { get; set; }
         public string UserName { get; set; }
+        public Int64 TenantId { get; set; }
 
         public string ToCypherQuery()
         {
@@ -16,15 +17,18 @@ namespace neo4j.lib.Classes
                 "MERGE (u:User {UserId: $userId}) " +
                 "ON CREATE " +
                 "SET u.UserName = $userName " +
+                ", u.TenantId = $tenantId " +
                 "ON MATCH " +
-                "SET u.UserName = $userName ";
+                "SET u.UserName = $userName " +
+                ", u.TenantId = $tenantId ";
         }
         public object GetParameters()
         {
             return new
             {
                 userId = UserId.ToString(),
-                userName = UserName
+                userName = UserName,
+                tenantId = TenantId,
             };
         }
         //public User ResultToObject(IRecord result)

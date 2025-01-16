@@ -1,11 +1,11 @@
-UserId,UserName
-b5030d47-8ac2-4e2e-a3d6-0d8636347b1d,User_0
-6ae321fe-8cbe-41c2-907e-cacae959afe6,User_1
-3cde9f1c-eb67-4bbc-8780-a74c5b9260a8,User_2
-e6a7d49c-26db-4a6b-b0b9-85570448d861,User_3
-458c289d-8562-46f4-8529-77e5e5d4aa47,User_4
-43f3e396-31af-4a58-943b-67283f4a423c,User_5
-78a785ba-9a76-4e3a-9061-263df525dc2c,John Doe
-89bfde4a-0e47-48dd-9dcc-e538a63b22b9,User_7
-4163b00e-1556-4ec4-a3d5-2da76c3fbb59,User_8
-0b37ce44-c817-4dca-88cf-581fa58fe63b,User_9
+UserId,UserName,TenantId
+b5030d47-8ac2-4e2e-a3d6-0d8636347b1d,User_0,1
+6ae321fe-8cbe-41c2-907e-cacae959afe6,User_1,1
+3cde9f1c-eb67-4bbc-8780-a74c5b9260a8,User_2,1
+e6a7d49c-26db-4a6b-b0b9-85570448d861,User_3,1
+458c289d-8562-46f4-8529-77e5e5d4aa47,User_4,1
+43f3e396-31af-4a58-943b-67283f4a423c,User_5,2
+78a785ba-9a76-4e3a-9061-263df525dc2c,John Doe,2
+89bfde4a-0e47-48dd-9dcc-e538a63b22b9,User_7,2
+4163b00e-1556-4ec4-a3d5-2da76c3fbb59,User_8,2
+0b37ce44-c817-4dca-88cf-581fa58fe63b,User_9,2
