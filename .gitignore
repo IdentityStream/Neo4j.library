@@ -13,6 +13,9 @@
 *.userosscache
 *.sln.docstates
 
+#neo4j connection-credentials
+Credentials.json
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
