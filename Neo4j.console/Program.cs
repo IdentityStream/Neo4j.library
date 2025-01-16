@@ -1,8 +1,19 @@
-﻿using neo4j.console;
+﻿using System.IO;
+using Newtonsoft.Json.Linq;
+using neo4j.console;
 using neo4j.lib;
 using neo4j.lib.Classes;
 using neo4j.lib.Interfaces;
 
+var credentials = JObject.Parse(File.ReadAllText("Credentials.json"));
+if (credentials == null)
+{
+    Console.WriteLine("Credentials file not found.");
+    return;
+}
+var auraUri = credentials["uri"].ToString();
+var user = credentials["username"].ToString();
+var password = credentials["password"].ToString();
 
 var testData = TestDataReader.GetTestData();
 var users = testData.Item1;
@@ -21,25 +32,17 @@ relationshipData.AddRange(roleAccessLevels);
 relationshipData.AddRange(userAccessLevels);
 relationshipData.AddRange(userRoles);
 
-
-var auraUri = "neo4j+s://28b70b84.databases.neo4j.io";
-var user = "neo4j";
-var password = "SMbachelor254!";
-
-
 var importer = new DataImport(user: user, password: password, uri: auraUri);
 Console.WriteLine("Importing nodes...");
 await importer.ImportData(nodeData);
 Console.WriteLine("Importing relationships...");
 await importer.ImportData(relationshipData);
 
-
 //var testImport = new List<IImportable>
 //{
 //    new UserRole { UserRoleId = 1421, UserId = Guid.NewGuid(), RoleId = 1512 }
 //};
 //await importer.ImportData(testImport);
-
 
 //var exporter = new DataExport(user: user, password: password, uri: auraUri);
 //while (true)
@@ -54,7 +57,6 @@ await importer.ImportData(relationshipData);
 //    Console.WriteLine(result);
 //}
 
-
 //var testImport = new List<IImportable>
 //{
 //    new User { UserId = Guid.NewGuid(), UserName = "John Doe" }
@@ -62,9 +64,6 @@ await importer.ImportData(relationshipData);
 ////Console.WriteLine(testImport[0].ToCypherQuery());
 ////Console.WriteLine(testImport[0].GetParameters());
 //await importer.ImportData(testImport);
-
-
-
 
 //var test = new HelloWorldExample(uri: auraUri, user: user, password: password);
 //test.PrintGreetingAsync("Hello, world!").Wait();
