@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 using neo4j.console;
 using neo4j.lib;
 using neo4j.lib.Classes;
-using neo4j.lib.Interfaces;
+using Neo4j.library.Interfaces;
 
 var credentials = JObject.Parse(File.ReadAllText("Credentials.json"));
 if (credentials == null)

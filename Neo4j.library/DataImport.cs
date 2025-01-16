@@ -1,11 +1,10 @@
 ﻿using Neo4j.Driver;
+using Neo4j.library.Interfaces;
 using System;
 using System.Collections.Generic;
-using neo4j.lib.Interfaces;
 using System.Threading.Tasks;
-using neo4j.lib.Classes;
 
-namespace neo4j.lib
+namespace Neo4j.library
 {
     public class DataImport : IDisposable
     {
@@ -23,7 +22,7 @@ namespace neo4j.lib
                 { "NodesCreated", 0 },
                 { "RelationshipsCreated", 0 }
             };
-            
+
             var session = _driver.AsyncSession();
             try
             {
@@ -47,7 +46,8 @@ namespace neo4j.lib
                         }
                     }
                 });
-                if (counters.Count > 0) {
+                if (counters.Count > 0)
+                {
                     Console.WriteLine("Import results:");
                     foreach (var count in counters)
                     {

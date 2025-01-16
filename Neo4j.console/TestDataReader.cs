@@ -1,6 +1,6 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
-using neo4j.lib.Classes;
+using Neo4j.library.Classes;
 using System.Globalization;
 
 namespace neo4j.console

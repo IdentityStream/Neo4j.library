@@ -1,13 +1,13 @@
-﻿using neo4j.lib.Interfaces;
+﻿using Neo4j.library.Interfaces;
 using System;
 
-namespace neo4j.lib.Classes
+namespace Neo4j.library.Classes
 {
     public class UserAccessLevel : IImportable
     {
-        public Int64 UserAccessLevelId { get; set; }
+        public long UserAccessLevelId { get; set; }
         public Guid UserId { get; set; }
-        public Int64 AccessLevelId { get; set; }
+        public long AccessLevelId { get; set; }
 
         public string ToCypherQuery()
         {

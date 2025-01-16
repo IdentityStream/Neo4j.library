@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace neo4j.lib.Interfaces
+﻿namespace Neo4j.library.Interfaces
 {
     /// <summary>
     /// Interface for classes that can be imported into Neo4j.

@@ -1,10 +1,4 @@
-﻿using neo4j.lib.Interfaces;
-using Neo4j.Driver;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace neo4j.lib
+﻿namespace Neo4j.library
 {
     public static class EntityMapper
     {

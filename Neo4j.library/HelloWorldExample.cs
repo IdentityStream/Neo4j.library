@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace neo4j.lib
+namespace Neo4j.library
 {
     public class HelloWorldExample : IDisposable
     {

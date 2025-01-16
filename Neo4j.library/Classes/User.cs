@@ -1,9 +1,7 @@
-﻿using neo4j.lib.Interfaces;
-using Neo4j.Driver;
-using Neo4j.Driver.Mapping;
+﻿using Neo4j.library.Interfaces;
 using System;
 
-namespace neo4j.lib.Classes
+namespace Neo4j.library.Classes
 {
     public class User : IImportable
     {

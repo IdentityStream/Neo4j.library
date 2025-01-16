@@ -1,14 +1,14 @@
-﻿using neo4j.lib.Interfaces;
-using Neo4j.Driver;
+﻿using Neo4j.Driver;
+using Neo4j.library.Interfaces;
 using System;
 
-namespace neo4j.lib.Classes
+namespace Neo4j.library.Classes
 {
     public class UserRole : IImportable
     {
-        public Int64 UserRoleId { get; set; }
+        public long UserRoleId { get; set; }
         public Guid UserId { get; set; }
-        public Int64 RoleId { get; set; }
+        public long RoleId { get; set; }
 
         public string ToCypherQuery()
         {

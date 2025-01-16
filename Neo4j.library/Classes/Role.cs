@@ -1,11 +1,10 @@
-﻿using neo4j.lib.Interfaces;
-using System;
+﻿using Neo4j.library.Interfaces;
 
-namespace neo4j.lib.Classes
+namespace Neo4j.library.Classes
 {
     public class Role : IImportable
     {
-        public Int64 RoleId { get; set; }
+        public long RoleId { get; set; }
         public string RoleTitle { get; set; }
 
         public string ToCypherQuery()

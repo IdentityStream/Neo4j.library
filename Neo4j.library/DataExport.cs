@@ -1,15 +1,12 @@
-﻿using neo4j.lib.Interfaces;
-using Neo4j.Driver;
+﻿using Neo4j.Driver;
+using Neo4j.Driver.Mapping;
+using Neo4j.library.Classes;
+using Neo4j.library.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Collections;
-using neo4j.lib.Classes;
-using Neo4j.Driver.Mapping;
 
-namespace neo4j.lib
+namespace Neo4j.library
 {
     public class DataExport : IDisposable
     {
