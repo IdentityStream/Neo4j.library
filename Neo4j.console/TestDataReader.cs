@@ -1,6 +1,7 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
-using Neo4j.library.Classes;
+using Neo4j.library.Classes.Nodes;
+using Neo4j.library.Classes.Relationships;
 using System.Globalization;
 
 namespace neo4j.console
@@ -21,7 +22,7 @@ namespace neo4j.console
         public static Tuple<List<User>, List<Role>, List<AccessLevel>, List<RoleAccessLevel>, List<UserAccessLevel>, List<UserRole>> GetTestData()
         {
             // File paths
-            string usersFile = "Users.csv"; // Replace with the actual file path
+            string usersFile = "Users.csv";
             string rolesFile = "Roles.csv";
             string accessLevelsFile = "AccessLevels.csv";
             string roleAccessLevelsFile = "RoleAccessLevels.csv";
@@ -36,7 +37,7 @@ namespace neo4j.console
             List<UserAccessLevel> userAccessLevels = ReadCsv<UserAccessLevel>(userAccessLevelsFile);
             List<UserRole> userRoles = ReadCsv<UserRole>(userRolesFile);
 
-            return new (users, roles, accessLevels, roleAccessLevels, userAccessLevels, userRoles);
+            return new(users, roles, accessLevels, roleAccessLevels, userAccessLevels, userRoles);
         }
     }
 }

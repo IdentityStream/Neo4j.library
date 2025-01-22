@@ -1,7 +1,9 @@
 ﻿using Neo4j.Driver;
+using Neo4j.library.Classes;
 using Neo4j.library.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Neo4j.library
@@ -14,46 +16,41 @@ namespace Neo4j.library
         {
             _driver = GraphDatabase.Driver(uri, AuthTokens.Basic(user, password));
         }
-
-        public async Task ImportData(List<IImportable> import)
+        public DataImport(string uri, string user, string password, Microsoft.Extensions.Logging.ILogger logger)
         {
-            var counters = new Dictionary<string, int>
-            {
-                { "NodesCreated", 0 },
-                { "RelationshipsCreated", 0 }
-            };
+            _driver = GraphDatabase.Driver(uri, AuthTokens.Basic(user, password), o => o.WithLogger(new Neo4jLoggerAdapter(logger)));
+        }
+
+        public async Task ImportSingleAsync<T>(T entity) where T : IImportable
+        {
+            var query = entity.ToCypherQuery();
+            var parameters = entity.GetParameters();
 
             var session = _driver.AsyncSession();
             try
             {
-                await session.ExecuteWriteAsync(
-                async tx =>
+                await session.RunAsync(query, parameters);
+            }
+            finally
+            {
+                if (session != null)
                 {
-                    var results = new List<string>();
-                    foreach (var importable in import)
-                    {
-                        var result = await tx.RunAsync(importable.ToCypherQuery(), importable.GetParameters());
-                        var summary = await result.ConsumeAsync();
-
-
-                        if (summary.Counters.NodesCreated > 0)
-                        {
-                            counters["NodesCreated"] += summary.Counters.NodesCreated;
-                        }
-                        if (summary.Counters.RelationshipsCreated > 0)
-                        {
-                            counters["RelationshipsCreated"] += summary.Counters.RelationshipsCreated;
-                        }
-                    }
-                });
-                if (counters.Count > 0)
-                {
-                    Console.WriteLine("Import results:");
-                    foreach (var count in counters)
-                    {
-                        Console.WriteLine($"{count.Key}: {count.Value}");
-                    }
+                    await session.DisposeAsync();
                 }
+            }
+        }
+
+        public async Task ImportBatchAsync<T>(IEnumerable<T> entities) where T : IImportable
+        {
+            if (!entities.Any()) return;
+
+            var query = entities.First().ToCypherBatchQuery();
+            var parameters = new { batch = entities.Select(e => e.GetParameters()) };
+
+            var session = _driver.AsyncSession();
+            try
+            {
+                await session.RunAsync(query, parameters);
             }
             finally
             {

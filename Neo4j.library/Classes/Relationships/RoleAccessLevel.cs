@@ -1,21 +1,21 @@
-﻿using Neo4j.library.Interfaces;
+﻿using Neo4j.library.Classes.Base;
 
-namespace Neo4j.library.Classes
+namespace Neo4j.library.Classes.Relationships
 {
-    public class RoleAccessLevel : IImportable
+    public class RoleAccessLevel : ImportableBase
     {
         public long RoleAccessLevelId { get; set; }
         public long RoleId { get; set; }
         public long AccessLevelId { get; set; }
 
-        public string ToCypherQuery()
+        public override string ToCypherQuery()
         {
             return
                 "MATCH (role:Role {RoleId: $roleId}) " +
                 "MATCH (accessLevel:AccessLevel {AccessLevelId: $accessLevelId}) " +
                 "MERGE (role)-[r:GRANTS_ACCESS_LEVEL {RoleAccessLevelId: $roleAccessLevelId}]->(accessLevel) ";
         }
-        public object GetParameters()
+        public override object GetParameters()
         {
             return new
             {
@@ -23,6 +23,14 @@ namespace Neo4j.library.Classes
                 roleId = RoleId,
                 accessLevelId = AccessLevelId
             };
+        }
+        public override string ToCypherBatchQuery()
+        {
+            return
+                "UNWIND $batch AS params " +
+                "MATCH (role:Role {RoleId: params.roleId}) " +
+                "MATCH (accessLevel:AccessLevel {AccessLevelId: params.accessLevelId}) " +
+                "MERGE (role)-[r:GRANTS_ACCESS_LEVEL {RoleAccessLevelId: params.roleAccessLevelId}]->(accessLevel) ";
         }
     }
 }

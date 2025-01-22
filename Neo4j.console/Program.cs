@@ -1,8 +1,8 @@
-﻿using System.IO;
-using Newtonsoft.Json.Linq;
+﻿using Microsoft.Extensions.Logging;
 using neo4j.console;
 using Neo4j.library;
 using Neo4j.library.Interfaces;
+using Newtonsoft.Json.Linq;
 
 var credentials = JObject.Parse(File.ReadAllText("Credentials.json"));
 if (credentials == null)
@@ -31,11 +31,32 @@ relationshipData.AddRange(roleAccessLevels);
 relationshipData.AddRange(userAccessLevels);
 relationshipData.AddRange(userRoles);
 
-var importer = new DataImport(user: user, password: password, uri: auraUri);
-Console.WriteLine("Importing nodes...");
-await importer.ImportData(nodeData);
-Console.WriteLine("Importing relationships...");
-await importer.ImportData(relationshipData);
+var logger = new Logger();
+var importer = new DataImport(uri: auraUri, user: user, password: password, logger: logger);
+
+await importer.ImportBatchAsync(users);
+await importer.ImportBatchAsync(roles);
+await importer.ImportBatchAsync(accessLevels);
+await importer.ImportBatchAsync(roleAccessLevels);
+await importer.ImportBatchAsync(userAccessLevels);
+await importer.ImportBatchAsync(userRoles);
+
+var exporter = new DataExport(uri: auraUri, user: user, password: password, logger: logger);
+var result = await exporter.ExportData();
+
+Console.WriteLine("Program.cs done.");
+public class Logger : ILogger<IImportable>
+{
+    public IDisposable? BeginScope<TState>(TState state) => null;
+
+    public bool IsEnabled(LogLevel logLevel) => true;
+
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+    {
+        Console.WriteLine(formatter(state, exception));
+    }
+}
+
 
 //var testImport = new List<IImportable>
 //{
