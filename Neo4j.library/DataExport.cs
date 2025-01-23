@@ -7,6 +7,7 @@ using Neo4j.library.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Neo4j.library
@@ -197,20 +198,118 @@ namespace Neo4j.library
             }
         }
 
-        private T GetPropertyValue<T>(IReadOnlyDictionary<string, object> props, string key)
+        // TODO: Disable Injection. Use parameters instead of string concatenation
+        public async Task<IImportable> ExportSingleNode(string label, string id)
         {
-            if (!props.ContainsKey(key))
-            {
-                throw new InvalidOperationException($"Required property {key} not found");
-            }
+            var query = $"MATCH (n:{label} {{{label}Id: {id}}}) RETURN n";
+            IImportable result = null;
+            var session = _driver.AsyncSession();
 
-            var value = props[key];
-            if (value == null)
+            try
             {
-                throw new InvalidOperationException($"Property {key} is null");
-            }
+                var records = await session.RunAsync(query);
 
-            return (T)Convert.ChangeType(value.ToString(), typeof(T));
+                while (await records.FetchAsync())
+                {
+                    var node = records.Current["n"].As<INode>();
+                    if (node != null)
+                    {
+                        var nodeEntity = CreateNodeEntity(node);
+                        if (nodeEntity != null)
+                        {
+                            result = nodeEntity;
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                if (session != null)
+                {
+                    await session.DisposeAsync();
+                }
+            }
+            return result;
+        }
+
+        public async Task<IImportable> ExportRandomNode()
+        {
+            var query = "MATCH (n) RETURN n ORDER BY rand() LIMIT 1";
+            IImportable result = null;
+            var session = _driver.AsyncSession();
+            try
+            {
+                var records = await session.RunAsync(query);
+                while (await records.FetchAsync())
+                {
+                    var node = records.Current["n"].As<INode>();
+                    if (node != null)
+                    {
+                        var nodeEntity = CreateNodeEntity(node);
+                        if (nodeEntity != null)
+                        {
+                            result = nodeEntity;
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                if (session != null)
+                {
+                    await session.DisposeAsync();
+                }
+            }
+            return result;
+        }
+
+        // TODO: Disable Injection. Use parameters instead of string concatenation
+        public async Task<List<IImportable>> ExportNeighbours(string label, string id)
+        {
+            var query =
+                $"MATCH (n:{label} {{{label}Id: {id}}})-[r]-(m) " +
+                $"RETURN n, r, m";
+
+            var result = new List<IImportable>();
+            var session = _driver.AsyncSession();
+            try
+            {
+                var records = await session.RunAsync(query);
+                while (await records.FetchAsync())
+                {
+
+                    var relationship = records.Current["r"].As<IRelationship>();
+                    var startNode =
+                        records.Current["n"].As<INode>().ElementId == relationship.StartNodeElementId ?
+                        records.Current["n"].As<INode>() : records.Current["m"].As<INode>();
+                    var endNode =
+                        records.Current["m"].As<INode>().ElementId == relationship.EndNodeElementId ?
+                        records.Current["m"].As<INode>() : records.Current["n"].As<INode>();
+
+                    if (relationship != null)
+                    {
+                        var relationshipEntity = CreateRelationshipEntity(relationship, startNode, endNode);
+                        if (relationshipEntity != null)
+                        {
+                            result.Add(relationshipEntity);
+                        }
+
+                        var nodeEntity = CreateNodeEntity(records.Current["m"].As<INode>());
+                        if (nodeEntity != null)
+                        {
+                            result.Add(nodeEntity);
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                if (session != null)
+                {
+                    await session.DisposeAsync();
+                }
+            }
+            return result;
         }
 
         public void Dispose()
