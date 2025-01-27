@@ -148,6 +148,7 @@ namespace Neo4j.library
                     return new Role
                     {
                         RoleId = long.Parse(props["RoleId"].ToString()),
+                        RoleTitle = props["RoleTitle"].ToString(),
                         Parameters = filteredProps
                     };
                 }
@@ -157,6 +158,7 @@ namespace Neo4j.library
                     return new AccessLevel
                     {
                         AccessLevelId = long.Parse(props["AccessLevelId"].ToString()),
+                        AccessLevelTitle = props["AccessLevelTitle"].ToString(),
                         Parameters = filteredProps
                     };
                 }
