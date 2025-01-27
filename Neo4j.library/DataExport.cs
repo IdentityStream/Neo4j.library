@@ -111,19 +111,35 @@ namespace Neo4j.library
             return result;
         }
 
+        private Dictionary<string, object> FilterProperties(IReadOnlyDictionary<string, object> properties)
+        {
+            var keysToRemove = new HashSet<string>
+            {
+                "UserId", "UserName", "RoleId", "RoleTitle", "AccessLevelId", "AccessLevelTitle",
+                "UserRoleId", "RoleAccessLevelId", "UserAccessLevelId"
+            };
+            var filteredProperties = properties
+                .Where(kv => !keysToRemove.Contains(kv.Key))
+                .ToDictionary(kv => kv.Key, kv => kv.Value);
+
+            return filteredProperties;
+        }
+
         private IImportable CreateNodeEntity(INode node)
         {
             try
             {
                 var label = node.Labels.FirstOrDefault();
                 var props = node.Properties;
+                var filteredProps = FilterProperties(props);
 
                 if (label == "User")
                 {
                     return new User
                     {
                         UserId = Guid.Parse(props["UserId"].ToString()),
-                        UserName = props["UserName"].ToString()
+                        UserName = props["UserName"].ToString(),
+                        Parameters = filteredProps
                     };
                 }
 
@@ -132,7 +148,7 @@ namespace Neo4j.library
                     return new Role
                     {
                         RoleId = long.Parse(props["RoleId"].ToString()),
-                        RoleTitle = props["RoleTitle"].ToString()
+                        Parameters = filteredProps
                     };
                 }
 
@@ -141,7 +157,7 @@ namespace Neo4j.library
                     return new AccessLevel
                     {
                         AccessLevelId = long.Parse(props["AccessLevelId"].ToString()),
-                        AccessLevelTitle = props["AccessLevelTitle"].ToString()
+                        Parameters = filteredProps
                     };
                 }
 
@@ -158,6 +174,7 @@ namespace Neo4j.library
             try
             {
                 var props = relationship.Properties;
+                var filteredProps = FilterProperties(props);
                 var type = relationship.Type;
 
                 if (type == "IS_MEMBER_OF")
@@ -166,7 +183,8 @@ namespace Neo4j.library
                     {
                         UserRoleId = long.Parse(props["UserRoleId"].ToString()),
                         UserId = Guid.Parse(startNode.Properties["UserId"].ToString()),
-                        RoleId = long.Parse(endNode.Properties["RoleId"].ToString())
+                        RoleId = long.Parse(endNode.Properties["RoleId"].ToString()),
+                        Parameters = filteredProps
                     };
                 }
 
@@ -176,7 +194,8 @@ namespace Neo4j.library
                     {
                         UserAccessLevelId = long.Parse(props["UserAccessLevelId"].ToString()),
                         UserId = Guid.Parse(startNode.Properties["UserId"].ToString()),
-                        AccessLevelId = long.Parse(endNode.Properties["AccessLevelId"].ToString())
+                        AccessLevelId = long.Parse(endNode.Properties["AccessLevelId"].ToString()),
+                        Parameters = filteredProps
                     };
                 }
 
@@ -186,7 +205,8 @@ namespace Neo4j.library
                     {
                         RoleAccessLevelId = long.Parse(props["RoleAccessLevelId"].ToString()),
                         RoleId = long.Parse(startNode.Properties["RoleId"].ToString()),
-                        AccessLevelId = long.Parse(endNode.Properties["AccessLevelId"].ToString())
+                        AccessLevelId = long.Parse(endNode.Properties["AccessLevelId"].ToString()),
+                        Parameters = filteredProps
                     };
                 }
 
