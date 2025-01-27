@@ -1,10 +1,12 @@
 ﻿using Neo4j.library.Interfaces;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Neo4j.library.Classes.Base
 {
     public abstract class ImportableBase : IImportable
     {
+        public Dictionary<string, object> Parameters { get; set; } = new Dictionary<string, object>();
         protected string BuildBaseMatchQuery(string label, string idField)
         {
             return $"MATCH (n:{label} {{{idField}: $params.{idField}}})";

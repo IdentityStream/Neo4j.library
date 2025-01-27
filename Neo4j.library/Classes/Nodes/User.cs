@@ -1,5 +1,6 @@
 ﻿using Neo4j.library.Classes.Base;
 using System;
+using System.Collections.Generic;
 
 namespace Neo4j.library.Classes.Nodes
 {
@@ -10,23 +11,27 @@ namespace Neo4j.library.Classes.Nodes
 
         public override string ToCypherQuery()
         {
-            return $"{BuildBaseMergeQuery("User", "UserId")} " +
-                   $"{BuildSetClause("UserTitle")}";
+            return "MERGE (u:User {UserId: $UserId}) " +
+                   "SET u += $parameters";
         }
 
         public override string ToCypherBatchQuery()
         {
             return "UNWIND $batch as params " +
                    "MERGE (u:User {UserId: params.UserId}) " +
-                   "SET u.UserName = params.UserName ";
+                   "SET u += params.parameters ";
         }
 
         public override object GetParameters()
         {
+            var parameterDict = new Dictionary<string, object>(Parameters)
+            {
+                { "UserName", UserName.ToString() },
+            };
             return new
             {
                 UserId = UserId.ToString(),
-                UserName
+                parameters = parameterDict
             };
         }
     }

@@ -14,7 +14,8 @@ namespace Neo4j.library.Classes.Relationships
             return
                 "MATCH(user:User {UserId: $userId}) " +
                 "MATCH(role:Role {RoleId: $roleId}) " +
-                "MERGE(user)-[r:IS_MEMBER_OF {UserRoleId: $userRoleId}]->(role) ";
+                "MERGE(user)-[r:IS_MEMBER_OF {UserRoleId: $userRoleId}]->(role) " +
+                "SET r += params.parameters ";
 
         }
         public override string ToCypherBatchQuery()
@@ -23,7 +24,8 @@ namespace Neo4j.library.Classes.Relationships
                 "UNWIND $batch AS params " +
                 "MATCH(user:User {UserId: params.userId}) " +
                 "MATCH(role:Role {RoleId: params.roleId}) " +
-                "MERGE(user)-[r:IS_MEMBER_OF {UserRoleId: params.userRoleId}]->(role) ";
+                "MERGE(user)-[r:IS_MEMBER_OF {UserRoleId: params.userRoleId}]->(role) " +
+                "SET r += params.parameters ";
         }
         public override object GetParameters()
         {
@@ -31,7 +33,8 @@ namespace Neo4j.library.Classes.Relationships
             {
                 userRoleId = UserRoleId,
                 userId = UserId.ToString(),
-                roleId = RoleId
+                roleId = RoleId,
+                parameters = Parameters
             };
         }
     }

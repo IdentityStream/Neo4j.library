@@ -14,7 +14,8 @@ namespace Neo4j.library.Classes.Relationships
             return
                 "MATCH (user:User {UserId: $userId} " +
                 "MATCH (accessLevel:AccessLevel {AccessLevelId: $accessLevelId}) " +
-                "MERGE (user)-[r:HAS_ACCESS_LEVEL {UserAccessLevelId: $userAccessLevelId}]->(accessLevel) ";
+                "MERGE (user)-[r:HAS_ACCESS_LEVEL {UserAccessLevelId: $userAccessLevelId}]->(accessLevel) " +
+                "SET r += params.parameters ";
         }
 
         public override string ToCypherBatchQuery()
@@ -23,7 +24,8 @@ namespace Neo4j.library.Classes.Relationships
                 "UNWIND $batch AS params " +
                 "MATCH (user:User {UserId: params.userId}) " +
                 "MATCH (accessLevel:AccessLevel {AccessLevelId: params.accessLevelId}) " +
-                "MERGE (user)-[r:HAS_ACCESS_LEVEL {UserAccessLevelId: params.userAccessLevelId}]->(accessLevel) ";
+                "MERGE (user)-[r:HAS_ACCESS_LEVEL {UserAccessLevelId: params.userAccessLevelId}]->(accessLevel) " +
+                "SET r += params.parameters ";
         }
 
         public override object GetParameters()
@@ -32,7 +34,8 @@ namespace Neo4j.library.Classes.Relationships
             {
                 userAccessLevelId = UserAccessLevelId,
                 userId = UserId.ToString(),
-                accessLevelId = AccessLevelId
+                accessLevelId = AccessLevelId,
+                parameters = Parameters
             };
         }
     }

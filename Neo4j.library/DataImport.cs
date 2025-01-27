@@ -72,38 +72,38 @@ namespace Neo4j.library
                .GroupBy(e => e.GetType().Name)
                .ToDictionary(group => group.Key, group => group.ToList());
 
-            foreach (var group in groupedItems)
+            var session = _driver.AsyncSession();
+            try
             {
-                _logger.LogInformation($"Starting import for group: {group.Key}");
-
-                for (int i = 0; i < group.Value.Count; i += batchSize)
+                foreach (var group in groupedItems)
                 {
-                    var batchItems = group.Value.Skip(i).Take(batchSize).ToList();
-                    int batchNumber = (i / batchSize) + 1;
+                    _logger.LogInformation($"Starting import for group: {group.Key}");
 
-                    _logger.LogInformation($"Importing {group.Key} - Batch {batchNumber}/{Math.Ceiling((double)group.Value.Count / batchSize)}");
+                    for (int i = 0; i < group.Value.Count; i += batchSize)
+                    {
+                        var batchItems = group.Value.Skip(i).Take(batchSize).ToList();
+                        int batchNumber = (i / batchSize) + 1;
 
-                    var session = _driver.AsyncSession();
-                    try
-                    {
-                        var query = batchItems[0].ToCypherBatchQuery();
-                        var parameters = new { batch = batchItems.Select(e => e.GetParameters()) };
-                        await session.RunAsync(query, parameters);
+                        _logger.LogInformation($"Importing {group.Key} - Batch {batchNumber}/{Math.Ceiling((double)group.Value.Count / batchSize)}");
+
+                            var query = batchItems[0].ToCypherBatchQuery();
+                            var parameters = new { batch = batchItems.Select(e => e.GetParameters()).ToList() };
+                            await session.RunAsync(query, parameters);
                     }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError($"Batch import error: {ex.Message}");
-                    }
-                    finally
-                    {
-                        if (session != null)
-                        {
-                            await session.DisposeAsync();
-                        }
-                    }
+
+                    _logger.LogInformation($"Completed import for group: {group.Key}");
                 }
-
-                _logger.LogInformation($"Completed import for group: {group.Key}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Batch import error: {ex.Message}");
+            }
+            finally
+            {
+                if (session != null)
+                {
+                    await session.DisposeAsync();
+                }
             }
         }
 
