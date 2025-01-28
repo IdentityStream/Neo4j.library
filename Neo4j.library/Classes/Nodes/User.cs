@@ -26,7 +26,7 @@ namespace Neo4j.library.Classes.Nodes
         {
             var parameterDict = new Dictionary<string, object>(Parameters)
             {
-                { "UserName", UserName.ToString() },
+                { "UserName", UserName },
             };
             return new
             {

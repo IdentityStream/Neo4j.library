@@ -6,6 +6,9 @@ using Newtonsoft.Json.Linq;
 using Neo4j.library.Classes.Nodes;
 using Neo4j.library.Classes.Relationships;
 using System.Diagnostics;
+using System.Reflection.Metadata;
+using CsvHelper;
+using System.Globalization;
 
 var credentials = JObject.Parse(File.ReadAllText("Credentials.json"));
 if (credentials == null)
@@ -14,29 +17,30 @@ if (credentials == null)
     return;
 }
 var auraUri = credentials["uri"].ToString();
+var dockerUri = "bolt://localhost:7687";
 var user = credentials["username"].ToString();
 var password = credentials["password"].ToString();
 
-var testData = TestDataReader.GetTestData();
-var users = testData.Item1;
-var roles = testData.Item2;
-var accessLevels = testData.Item3;
-var roleAccessLevels = testData.Item4;
-var userAccessLevels = testData.Item5;
-var userRoles = testData.Item6;
+//var testData = TestDataReader.GetTestData();
+//var users = testData.Item1;
+//var roles = testData.Item2;
+//var accessLevels = testData.Item3;
+//var roleAccessLevels = testData.Item4;
+//var userAccessLevels = testData.Item5;
+//var userRoles = testData.Item6;
 
-var nodeData = new List<IImportable>();
-var relationshipData = new List<IImportable>();
-nodeData.AddRange(users);
-nodeData.AddRange(roles);
-nodeData.AddRange(accessLevels);
-relationshipData.AddRange(roleAccessLevels);
-relationshipData.AddRange(userAccessLevels);
-relationshipData.AddRange(userRoles);
+//var nodeData = new List<IImportable>();
+//var relationshipData = new List<IImportable>();
+//nodeData.AddRange(users);
+//nodeData.AddRange(roles);
+//nodeData.AddRange(accessLevels);
+//relationshipData.AddRange(roleAccessLevels);
+//relationshipData.AddRange(userAccessLevels);
+//relationshipData.AddRange(userRoles);
 
-var allData = new List<IImportable>();
-allData.AddRange(nodeData);
-allData.AddRange(relationshipData);
+//var allData = new List<IImportable>();
+//allData.AddRange(nodeData);
+//allData.AddRange(relationshipData);
 
 //var logger = new Logger();
 //logger.SetLogLevel(LogLevel.Debug);
@@ -54,10 +58,52 @@ allData.AddRange(relationshipData);
 //var exporter = new DataExport(uri: auraUri, user: user, password: password, logger: logger);
 //var result = await exporter.ExportData();
 
+//var init = new InitializeDB(uri: dockerUri, user: user, password: password);
+//await init.CreateConstraints();
+
 var testLogger = new Logger();
-testLogger.SetLogLevel(LogLevel.Information);
-var test = new ImportPerformanceTest(10000, 50, new DataImport(uri: auraUri, user: user, password: password, logger: testLogger));
+
+var testUsers = new List<IImportable>()
+{
+    new User
+    {
+        UserId = Guid.NewGuid(),
+        UserName = "John Doe",
+        Parameters = new()
+        {
+            { "Email", "john.d@example.com" },
+            { "Phone", "555-555-5555" }
+        }
+    },
+    new User
+    {
+        UserId = Guid.NewGuid(),
+        UserName = "Jane Doe",
+        Parameters = new()
+        {
+            { "Email", "jane@doodle.no" },
+            { "Phone", "125-555-5555" }
+        }
+    },
+    new User
+    {
+        UserId = Guid.NewGuid(),
+        UserName = "Jim Doe",
+        Parameters = new()
+        {
+            { "Email", "jimmy.doe@cool.space.com" },
+            { "Phone", "555-589-55615" }
+        }
+    }
+};
+
+var testImporter = new DataImport(uri: auraUri, user: user, password: password, logger: testLogger);
+//await testImporter.ImportBatchBetterAsync(testUsers);
+
+var test = new ImportPerformanceTest(1000000, 60, new DataImport(uri: dockerUri, user: user, password: password, logger: testLogger));
 await test.RunTest();
+
+//await testImporter.ImportUsingCsvAsync("csv/nodes.csv", "csv/relationships.csv");
 
 Console.WriteLine("Program.cs done.");
 
@@ -68,7 +114,7 @@ public class Logger : ILogger<IImportable>
 
     public bool IsEnabled(LogLevel logLevel) => logLevel >= _currentLogLevel;
 
-    private LogLevel _currentLogLevel = LogLevel.Trace;
+    private LogLevel _currentLogLevel = LogLevel.Information;
 
     private readonly Dictionary<LogLevel, ConsoleColor> _logLevelColors = new()
     {
@@ -207,8 +253,8 @@ public class ImportPerformanceTest
         // Combine all importable items
         var data = new List<IImportable>();
         data.AddRange(users);
-        data.AddRange(roles);
         data.AddRange(accessLevels);
+        data.AddRange(roles);
         data.AddRange(userRoles);
         data.AddRange(roleAccessLevels);
         data.AddRange(userAccessLevels);
@@ -217,9 +263,51 @@ public class ImportPerformanceTest
         Console.WriteLine($"Total Nodes: {users.Count + roles.Count + accessLevels.Count}");
         Console.WriteLine($"Total Relationships: {userRoles.Count + roleAccessLevels.Count + userAccessLevels.Count}");
 
+
         var stopwatch = Stopwatch.StartNew();
 
         await DataImport.ImportBatchBetterAsync(data);
+
+        //System.IO.Directory.CreateDirectory("csv");
+
+        //await using (var writer = new StreamWriter("csv/users.csv"))
+        //await using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+        //{
+        //    csv.WriteRecords(users);
+        //}
+
+        //await using (var writer = new StreamWriter("csv/roles.csv"))
+        //await using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+        //{
+        //    csv.WriteRecords(roles);
+        //}
+
+        //await using (var writer = new StreamWriter("csv/accessLevels.csv"))
+        //await using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+        //{
+        //    csv.WriteRecords(accessLevels);
+        //}
+
+        //await using (var writer = new StreamWriter("csv/userRoles.csv"))
+        //await using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+        //{
+        //    csv.WriteRecords(userRoles);
+        //}
+
+        //await using (var writer = new StreamWriter("csv/roleAccessLevels.csv"))
+        //await using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+        //{
+        //    csv.WriteRecords(roleAccessLevels);
+        //}
+
+        //await using (var writer = new StreamWriter("csv/userAccessLevels.csv"))
+        //await using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+        //{
+        //    csv.WriteRecords(userAccessLevels);
+        //}
+
+
+        //await DataImport.ImportBatchBetterAsync(data, 700);
 
         stopwatch.Stop();
 
@@ -231,13 +319,24 @@ public class ImportPerformanceTest
             ImportDuration = stopwatch.Elapsed,
         };
 
-        Console.WriteLine("Statistics: ");
-        Console.WriteLine($"    Total Nodes: {statistics.TotalNodes}");
-        Console.WriteLine($"    Total Relationships: {statistics.TotalRelationships}");
-        Console.WriteLine($"    Import Duration: {statistics.ImportDuration}");
+        //Console.WriteLine("Statistics: ");
+        //Console.WriteLine($"    Total Nodes: {statistics.TotalNodes}");
+        //Console.WriteLine($"    Total Relationships: {statistics.TotalRelationships}");
+        //Console.WriteLine($"    Import Duration: {statistics.ImportDuration}");
 
         return statistics;
     }
+
+
+    public void GenerateImportableCsv(string filepath, List<IImportable> data)
+    {
+        using (var writer = new StreamWriter(filepath))
+        using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+        {
+            csv.WriteRecords(data);
+        }
+    }
+
 }
 public class ImportStatistics
 {
@@ -247,7 +346,6 @@ public class ImportStatistics
     public double NodesPerSecond { get; set; }
     public double RelationshipsPerSecond { get; set; }
 }
-
 
 
 
