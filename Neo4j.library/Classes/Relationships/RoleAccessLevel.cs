@@ -20,9 +20,9 @@ namespace Neo4j.library.Classes.Relationships
         {
             return
                 "UNWIND $batch AS params " +
-                "MATCH (role:Role {RoleId: params.roleId}) " +
-                "MATCH (accessLevel:AccessLevel {AccessLevelId: params.accessLevelId}) " +
-                "MERGE (role)-[r:GRANTS_ACCESS_LEVEL {RoleAccessLevelId: params.roleAccessLevelId}]->(accessLevel) " +
+                "MATCH(role:Role {RoleId: params.roleId}) " +
+                "MATCH(accessLevel:AccessLevel {AccessLevelId: params.accessLevelId}) " +
+                "MERGE(role)-[r:GRANTS_ACCESS_LEVEL {RoleAccessLevelId: params.roleAccessLevelId}]->(accessLevel) " +
                 "SET r += params.parameters ";
         }
         public override object GetParameters()
@@ -32,7 +32,7 @@ namespace Neo4j.library.Classes.Relationships
                 roleAccessLevelId = RoleAccessLevelId,
                 roleId = RoleId,
                 accessLevelId = AccessLevelId,
-                prameters = Parameters
+                parameters = Parameters
             };
         }
     }
