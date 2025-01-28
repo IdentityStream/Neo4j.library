@@ -12,9 +12,9 @@ namespace Neo4j.library.Classes.Relationships
         public override string ToCypherQuery()
         {
             return
-                "MATCH (user:User {UserId: $userId} " +
-                "MATCH (accessLevel:AccessLevel {AccessLevelId: $accessLevelId}) " +
-                "MERGE (user)-[r:HAS_ACCESS_LEVEL {UserAccessLevelId: $userAccessLevelId}]->(accessLevel) " +
+                "MATCH(user:User {UserId: $userId} " +
+                "MATCH(accessLevel:AccessLevel {AccessLevelId: $accessLevelId}) " +
+                "MERGE(user)-[r:HAS_ACCESS_LEVEL {UserAccessLevelId: $userAccessLevelId}]->(accessLevel) " +
                 "SET r += params.parameters ";
         }
 
@@ -22,9 +22,9 @@ namespace Neo4j.library.Classes.Relationships
         {
             return
                 "UNWIND $batch AS params " +
-                "MATCH (user:User {UserId: params.userId}) " +
-                "MATCH (accessLevel:AccessLevel {AccessLevelId: params.accessLevelId}) " +
-                "MERGE (user)-[r:HAS_ACCESS_LEVEL {UserAccessLevelId: params.userAccessLevelId}]->(accessLevel) " +
+                "MATCH(user:User {UserId: params.userId}) " +
+                "MATCH(accessLevel:AccessLevel {AccessLevelId: params.accessLevelId}) " +
+                "MERGE(user)-[r:HAS_ACCESS_LEVEL {UserAccessLevelId: params.userAccessLevelId}]->(accessLevel) " +
                 "SET r += params.parameters ";
         }
 
