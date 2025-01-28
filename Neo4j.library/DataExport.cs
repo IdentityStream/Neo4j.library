@@ -223,13 +223,13 @@ namespace Neo4j.library
         // TODO: Disable Injection. Use parameters instead of string concatenation
         public async Task<IImportable> ExportSingleNode(string label, string id)
         {
-            var query = $"MATCH (n:{label} {{{label}Id: {id}}}) RETURN n";
+            var query = $"MATCH (n:{label} {{{label}Id: $Id}}) RETURN n";
             IImportable result = null;
             var session = _driver.AsyncSession();
 
             try
             {
-                var records = await session.RunAsync(query);
+                var records = await session.RunAsync(query, new { Id = id });
 
                 while (await records.FetchAsync())
                 {
@@ -242,6 +242,11 @@ namespace Neo4j.library
                             result = nodeEntity;
                         }
                     }
+                }
+                if (result == null)
+                {
+                    // Log or throw an exception when no result is found
+                    throw new InvalidOperationException($"No node found with label '{label}' and ID '{id}'.");
                 }
             }
             finally
@@ -322,6 +327,11 @@ namespace Neo4j.library
                             result.Add(nodeEntity);
                         }
                     }
+                }
+                if (!result.Any())
+                {
+                    // Handle cases where no neighbors are found
+                    throw new InvalidOperationException($"No neighbors found for node with label '{label}' and ID '{id}'.");
                 }
             }
             finally
